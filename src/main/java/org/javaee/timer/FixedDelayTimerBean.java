@@ -1,0 +1,20 @@
+package org.javaee.timer;
+
+import javax.ejb.*;
+
+/**
+ * Created by cristianchiovari on 5/2/16.
+ */
+@Singleton
+public class FixedDelayTimerBean {
+
+    @EJB
+    private WorkerBean workerBean;
+
+    @Lock(LockType.READ)
+    @Schedule(second = "*/5", minute = "*", hour = "*", persistent = false)
+    public void atSchedule() throws InterruptedException {
+        workerBean.doTimerWork();
+    }
+
+}
