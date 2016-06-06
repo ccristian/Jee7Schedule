@@ -1,4 +1,4 @@
-package org.javaee.timer;
+package com.baeldung.timer;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -7,11 +7,11 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 /**
- * author: Cristian Chiovari
+ * author: Jacek Jackowiak
  */
 @Startup
 @Singleton
-public class ProgrammaticWithInitialFixedDelayTimerBean {
+public class ProgrammaticTimerBean {
 
     @Inject
     Event<TimerEvent> event;
@@ -21,7 +21,15 @@ public class ProgrammaticWithInitialFixedDelayTimerBean {
 
     @PostConstruct
     public void initialize() {
-        timerService.createTimer(10000l,5000l, "Delay 10 seconds then every 5 second timer");
+        ScheduleExpression scheduleExpression = new ScheduleExpression()
+                .hour("*")
+                .minute("*")
+                .second("*/5");
+
+        TimerConfig timerConfig = new TimerConfig();
+        timerConfig.setInfo("Every 5 second timer");
+
+        timerService.createCalendarTimer(scheduleExpression, timerConfig);
     }
 
     @Timeout

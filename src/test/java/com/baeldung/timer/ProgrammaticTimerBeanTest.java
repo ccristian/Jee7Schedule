@@ -1,4 +1,4 @@
-package org.javaee.timer;
+package com.baeldung.timer;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -16,7 +16,6 @@ import static com.jayway.awaitility.Awaitility.to;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.javaee.timer.WithinWindowMatcher.withinWindow;
 
 
 @RunWith(Arquillian.class)
@@ -49,6 +48,6 @@ public class ProgrammaticTimerBeanTest {
 
         long delay = secondEvent.getTime() - firstEvent.getTime();
         System.out.println("Actual timeout = " + delay);
-        assertThat(delay, is(withinWindow(TIMEOUT, TOLERANCE)));
+        assertThat(delay, is(WithinWindowMatcher.withinWindow(TIMEOUT, TOLERANCE)));
     }
 }

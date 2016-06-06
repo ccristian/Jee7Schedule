@@ -1,4 +1,4 @@
-package org.javaee.timer;
+package com.baeldung.timer;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;

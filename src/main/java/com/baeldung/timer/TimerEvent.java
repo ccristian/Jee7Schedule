@@ -1,4 +1,4 @@
-package org.javaee.timer;
+package com.baeldung.timer;
 
 public class TimerEvent {
 

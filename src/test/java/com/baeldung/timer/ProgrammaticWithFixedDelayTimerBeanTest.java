@@ -1,4 +1,4 @@
-package org.javaee.timer;
+package com.baeldung.timer;
 
 import com.jayway.awaitility.Awaitility;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -18,14 +18,13 @@ import static com.jayway.awaitility.Awaitility.to;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.javaee.timer.WithinWindowMatcher.withinWindow;
 
 
 @RunWith(Arquillian.class)
-public class ProgrammaticAtFixedRateTimerBeanTest {
+public class ProgrammaticWithFixedDelayTimerBeanTest {
 
-    final static long TIMEOUT = 1000;
-    final static long TOLERANCE = 500l;
+    final static long TIMEOUT = 15000l;
+    final static long TOLERANCE = 1000l;
 
     @Inject
     TimerEventListener timerEventListener;
@@ -38,20 +37,25 @@ public class ProgrammaticAtFixedRateTimerBeanTest {
 
         return ShrinkWrap.create(WebArchive.class)
                 .addAsLibraries(jars)
-                .addClasses(WithinWindowMatcher.class, TimerEvent.class, TimerEventListener.class, ProgrammaticAtFixedRateTimerBean.class);
+                .addClasses(WithinWindowMatcher.class, TimerEvent.class, TimerEventListener.class, ProgrammaticWithInitialFixedDelayTimerBean.class);
     }
 
     @Test
-    public void should_receive_ten_pings() {
+    public void should_receive_two_pings() {
 
         Awaitility.setDefaultTimeout(30, TimeUnit.SECONDS);
 
-        await().untilCall(to(timerEventListener.getEvents()).size(), equalTo(10));
+        // 10 seconds pause so we get the startTime and it will trigger first event
+        long startTime = System.currentTimeMillis();
+
+        await().untilCall(to(timerEventListener.getEvents()).size(), equalTo(2));
         TimerEvent firstEvent = timerEventListener.getEvents().get(0);
         TimerEvent secondEvent = timerEventListener.getEvents().get(1);
 
-        long delay = secondEvent.getTime() - firstEvent.getTime();
+        long delay = secondEvent.getTime() - startTime;
         System.out.println("Actual timeout = " + delay);
-        assertThat(delay, is(withinWindow(TIMEOUT, TOLERANCE)));
+
+        //apx 15 seconds = 10 delay + 2 timers (first after a pause of 10 seconds and the next others every 5 seconds)
+        assertThat(delay, is(WithinWindowMatcher.withinWindow(TIMEOUT, TOLERANCE)));
     }
 }
